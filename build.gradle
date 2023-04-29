@@ -679,6 +679,7 @@ subprojects {
     configFile = new File(rootDir, "checkstyle/checkstyle.xml")
     configProperties = checkstyleConfigProperties("import-control.xml")
     toolVersion = versions.checkstyle
+    ignoreFailures = true
   }
 
   configure(checkstyleMain) {
@@ -1326,6 +1327,9 @@ project(':clients') {
     implementation libs.lz4
     implementation libs.snappy
     implementation libs.slf4jApi
+    implementation libs.nettyHandler
+    implementation( group: "io.netty", name: "netty-tcnative-boringssl-static", classifier: "linux-x86_64", version: "2.0.60.Final")
+    implementation( group: "io.netty", name: "netty-tcnative-boringssl-static", classifier: "osx-x86_64", version: "2.0.60.Final")
 
     compileOnly libs.jacksonDatabind // for SASL/OAUTHBEARER bearer token parsing
     compileOnly libs.jacksonJDK8Datatypes

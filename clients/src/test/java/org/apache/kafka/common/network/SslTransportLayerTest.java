@@ -28,6 +28,7 @@ import org.apache.kafka.common.requests.ApiVersionsResponse;
 import org.apache.kafka.common.security.TestSecurityConfig;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.security.ssl.DefaultSslEngineFactory;
+import org.apache.kafka.common.security.ssl.NettySslEngineFactory;
 import org.apache.kafka.common.security.ssl.SslFactory;
 import org.apache.kafka.common.utils.Java;
 import org.apache.kafka.common.utils.LogContext;
@@ -111,7 +112,7 @@ public class SslTransportLayerTest {
             clientCertStores = certBuilder(false, "client", useInlinePem).addHostName("localhost").build();
             sslServerConfigs = getTrustingConfig(serverCertStores, clientCertStores);
             sslClientConfigs = getTrustingConfig(clientCertStores, serverCertStores);
-            sslServerConfigs.put(SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG, DefaultSslEngineFactory.class);
+            sslServerConfigs.put(SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG, NettySslEngineFactory.class);
             sslClientConfigs.put(SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG, DefaultSslEngineFactory.class);
         }
 
