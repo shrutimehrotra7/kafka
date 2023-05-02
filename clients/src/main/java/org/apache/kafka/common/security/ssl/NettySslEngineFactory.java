@@ -6,6 +6,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProtocols;
 import io.netty.handler.ssl.SslProvider;
+import io.netty.internal.tcnative.SSL;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.config.types.Password;
@@ -120,7 +121,7 @@ public class NettySslEngineFactory implements SslEngineFactory {
 
             return SslContextBuilder.forServer(kmf)
                 .sslProvider(SslProvider.OPENSSL)
-                .protocols(SslProtocols.TLS_v1_3)
+                .protocols(SslProtocols.TLS_v1_3, SslProtocols.TLS_v1_2)
                 .ciphers(Collections.singletonList("TLS_AES_128_GCM_SHA256"))
                 .trustManager(tmf)
                 .build();
