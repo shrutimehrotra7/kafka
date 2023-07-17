@@ -59,8 +59,8 @@ public class SslConfigs {
 
     static {
         if (Java.IS_JAVA11_COMPATIBLE) {
-            DEFAULT_SSL_PROTOCOL = "TLSv1.3";
-            DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2,TLSv1.3";
+            DEFAULT_SSL_PROTOCOL = "TLSv1.2";
+            DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2";
         } else {
             DEFAULT_SSL_PROTOCOL = "TLSv1.2";
             DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2";
