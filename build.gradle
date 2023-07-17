@@ -1328,8 +1328,8 @@ project(':clients') {
     implementation libs.snappy
     implementation libs.slf4jApi
     implementation libs.nettyHandler
-    implementation( group: "io.netty", name: "netty-tcnative-boringssl-static", classifier: "linux-x86_64", version: "2.0.60.Final")
-    implementation( group: "io.netty", name: "netty-tcnative-boringssl-static", classifier: "osx-x86_64", version: "2.0.60.Final")
+    implementation( group: "io.netty", name: "netty-tcnative", classifier: "linux-x86_64", version: "2.0.60.Final")
+    implementation( group: "io.netty", name: "netty-tcnative", classifier: "osx-x86_64", version: "2.0.60.Final")
 
     compileOnly libs.jacksonDatabind // for SASL/OAUTHBEARER bearer token parsing
     compileOnly libs.jacksonJDK8Datatypes
