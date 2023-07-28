@@ -58,13 +58,8 @@ public class SslConfigs {
     public static final String DEFAULT_SSL_ENABLED_PROTOCOLS;
 
     static {
-        if (Java.IS_JAVA11_COMPATIBLE) {
-            DEFAULT_SSL_PROTOCOL = "TLSv1.3";
-            DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2,TLSv1.3";
-        } else {
-            DEFAULT_SSL_PROTOCOL = "TLSv1.2";
-            DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2";
-        }
+        DEFAULT_SSL_PROTOCOL = "TLSv1.2";
+        DEFAULT_SSL_ENABLED_PROTOCOLS = "TLSv1.2";
     }
 
     public static final String SSL_KEYSTORE_TYPE_CONFIG = "ssl.keystore.type";

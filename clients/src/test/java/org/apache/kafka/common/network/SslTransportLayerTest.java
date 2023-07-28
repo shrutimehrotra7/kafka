@@ -113,6 +113,7 @@ public class SslTransportLayerTest {
             sslServerConfigs = getTrustingConfig(serverCertStores, clientCertStores);
             sslClientConfigs = getTrustingConfig(clientCertStores, serverCertStores);
             sslServerConfigs.put(SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG, NettySslEngineFactory.class);
+            sslServerConfigs.put(BrokerSecurityConfigs.SSL_CLIENT_AUTH_CONFIG, "none");
         }
 
         @Override
@@ -751,6 +752,7 @@ public class SslTransportLayerTest {
                 "MetricGroup", new HashMap<>(), false, true, channelBuilder, MemoryPool.NONE, logContext)) {
 
             String node = "0";
+            args.sslServerConfigs.put(BrokerSecurityConfigs.SSL_CLIENT_AUTH_CONFIG, "none");
             server = createEchoServer(args, SecurityProtocol.SSL);
             InetSocketAddress addr = new InetSocketAddress("localhost", server.port());
             selector.connect(node, addr, BUFFER_SIZE, BUFFER_SIZE);

@@ -17,7 +17,6 @@
 package org.apache.kafka.common.security.ssl;
 
 import io.netty.buffer.UnpooledByteBufAllocator;
-import io.netty.handler.ssl.CipherSuiteFilter;
 import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -41,7 +40,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
@@ -80,11 +78,12 @@ public class NettySslEngineFactory implements SslEngineFactory {
     private Map<String, ?> configs;
     private String protocol;
     private String provider;
-
+    private String endpointIdentification;
     private NettySslEngineFactory.SecurityStore keystore;
     private NettySslEngineFactory.SecurityStore truststore;
     private String kmfAlgorithm;
     private String tmfAlgorithm;
+    private Mode mode;
     private SecureRandom secureRandomImplementation;
 
     public static final String PEM_TYPE = "PEM";
@@ -106,7 +105,9 @@ public class NettySslEngineFactory implements SslEngineFactory {
 
         this.sslClientAuth = createSslClientAuth((String) configs.get(
             BrokerSecurityConfigs.SSL_CLIENT_AUTH_CONFIG));
-
+        String endpointIdentification = (String) configs.get(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG);
+        if (endpointIdentification != null)
+            this.endpointIdentification = endpointIdentification;
         this.configs = Collections.unmodifiableMap(configs);
         this.secureRandomImplementation = createSecureRandom((String)
             configs.get(SslConfigs.SSL_SECURE_RANDOM_IMPLEMENTATION_CONFIG));
@@ -199,10 +200,16 @@ public class NettySslEngineFactory implements SslEngineFactory {
                 case NONE:
                     break;
             }
+            sslEngine.setNeedClientAuth(false);
+            sslEngine.setWantClientAuth(false);
             sslEngine.setUseClientMode(false);
+        } else {
+            sslEngine.setUseClientMode(true);
+            SSLParameters sslParams = sslEngine.getSSLParameters();
+            sslParams.setEndpointIdentificationAlgorithm(endpointIdentification);
+            sslEngine.setSSLParameters(sslParams);
         }
-
-        sslEngine.setUseClientMode(mode == Mode.CLIENT);
+        this.mode = mode;
         return sslEngine;
     }
 
@@ -453,6 +460,12 @@ public class NettySslEngineFactory implements SslEngineFactory {
 
         private KeyStore createTrustStoreFromPem(String trustedCertsPem) {
             try {
+                /**
+                 * PKCS12 - In cryptography, PKCS #12 defines an archive file format for storing
+                 * many cryptography objects as a single file. It is commonly used to bundle a
+                 * private key with its X. 509 certificate or to bundle all the members of a chain of trust
+                 * An X.509 certificate binds an identity to a public key using a digital signature
+                */
                 KeyStore ts = KeyStore.getInstance("PKCS12");
                 ts.load(null, null);
                 Certificate[] certs = certs(trustedCertsPem);
