@@ -20,6 +20,7 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslContextOption;
 import io.netty.handler.ssl.SslProtocols;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.kafka.common.KafkaException;
@@ -153,13 +154,15 @@ public class NettySslEngineFactory implements SslEngineFactory {
             log.debug("Created SSL context with keystore {}, truststore {}, provider {}.",
                 keystore, truststore, OPENSSL.name());
 
-            return SslContextBuilder.forServer(kmf)
-                .sslProvider(SslProvider.OPENSSL)
-                .protocols(SslProtocols.TLS_v1_2)
-                // openssl ciphers -v gives you info on what all suites are supported
-                .ciphers(Collections.singletonList("AES128-GCM-SHA256"))
-                .trustManager(tmf)
-                .build();
+            SslContext thisSslContext = SslContextBuilder.forServer(kmf)
+                    .sslProvider(OPENSSL)
+                    .option(SslContextOption.valueOf("SSL_OP_ENABLE_KTLS"), 4194304)
+                    .protocols(SslProtocols.TLS_v1_2)
+                    // openssl ciphers -v gives you info on what all suites are supported
+                    .ciphers(Collections.singletonList("AES128-GCM-SHA256"))
+                    .trustManager(tmf)
+                    .build();
+            return thisSslContext;
         } catch (Exception e) {
             throw new KafkaException(e);
         }

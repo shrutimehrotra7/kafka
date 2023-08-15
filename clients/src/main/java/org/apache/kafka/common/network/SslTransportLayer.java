@@ -1008,7 +1008,9 @@ public class SslTransportLayer implements TransportLayer {
 
     @Override
     public long transferFrom(FileChannel fileChannel, long position, long count) throws IOException {
-        log.trace("Transferring from file with Kernel TLS enabled");
+        log.info("Calling transferTo with Kernel TLS enabled with ssl protocols: {}, handshakeStatus: {}",
+                sslEngine.getEnabledProtocols(),
+                sslEngine.getHandshakeStatus());
         return fileChannel.transferTo(position, count, socketChannel);
     }
 }
