@@ -1011,6 +1011,17 @@ public class SslTransportLayer implements TransportLayer {
         log.info("Calling transferTo with Kernel TLS enabled with ssl protocols: {}, handshakeStatus: {}",
                 sslEngine.getEnabledProtocols(),
                 sslEngine.getHandshakeStatus());
+        if (state == State.CLOSING)
+            throw closingException();
+        if (state != State.READY)
+            return 0;
+
+        if (!flush(netWriteBuffer))
+            return 0;
+
+        long channelSize = fileChannel.size();
+        if (position > channelSize)
+            return 0;
         return fileChannel.transferTo(position, count, socketChannel);
     }
 }
