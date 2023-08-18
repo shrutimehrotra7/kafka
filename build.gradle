@@ -49,7 +49,7 @@ ext {
   gradleVersion = versions.gradle
   minJavaVersion = 8
   buildVersionFileName = "kafka-version.properties"
-  tcNativeBaseDir = file("$buildDir/lib")
+  tcNativeBaseDir = file("$buildDir/lib/META-INF/native")
 
   defaultMaxHeapSize = "2g"
   defaultJvmArgs = ["-Xss4m", "-XX:+UseParallelGC", "-Djava.library.path=" + tcNativeBaseDir.absolutePath]
@@ -1437,6 +1437,8 @@ project(':clients') {
     // this is very specific to where tcNative places it's .so directories
     from { configurations.tcNativeLinuxFedora.collect { zipTree(it).matching {
       include 'META-INF/native/**/*.so'
+      include 'META-INF/native/**/*.dynlib'
+      include 'META-INF/native/**/*.jnilib'
     } } }
     into tcNativeBaseDir
     eachFile { file ->
@@ -1461,7 +1463,7 @@ project(':clients') {
   }
 
   task extractTcNativeLibs {
-    dependsOn extractTcNativeLibsOsx, extractTcNativeLibsLinuxFedora, extractTcNativeLibsLinux
+    dependsOn extractTcNativeLibsLinuxFedora
   }
 
   sourceSets {
