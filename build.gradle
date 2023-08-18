@@ -1444,7 +1444,7 @@ project(':clients') {
     eachFile { file ->
       file.path = file.name
     }
-    duplicatesStrategy 'exclude'
+    duplicatesStrategy 'include'
   }
 
   task extractTcNativeLibsOsx(type: Copy) {
